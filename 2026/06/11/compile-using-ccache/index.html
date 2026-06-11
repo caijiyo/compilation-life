@@ -19,21 +19,23 @@
   <meta name="author" content="zn">
   <meta name="keywords" content="">
   
-    <meta name="description" content="一、Git 基础概念关键概念：  工作区（Working Directory）：你当前编辑代码的目录  暂存区（Staging Area）：用于存放即将提交的更改  本地仓库（Local Repository）：保存历史版本记录  远程仓库（Remote Repository）：托管在服务器上的代码仓库（如 GitHub）   Git 的基本工作流程如下： 工作区 → 暂存区 → 本地仓库 → 远">
+    <meta name="description" content="前言一些大的项目，每次重新编译需要等待较长时间。ccache是一个编译缓存工具，它的工作原理是将被编译过的目标文件（例如.o文件）缓存起来。当你再次编译相同代码时，它会直接从缓存中读取已经编译好的文件，而不是让编译器重新执行耗时的编译过程。 安装ccache 安装前，需要先安装编译工具  1sudo apt install build-essential   更新软件包列表  1sudo apt">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Git 常用命令使用">
-<meta property="og:url" content="https://www.8822888.xyz/2026/05/04/Git-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:title" content="使用ccache加速编译">
+<meta property="og:url" content="https://www.8822888.xyz/2026/06/11/compile-using-ccache/index.html">
 <meta property="og:site_name" content="编译生活">
-<meta property="og:description" content="一、Git 基础概念关键概念：  工作区（Working Directory）：你当前编辑代码的目录  暂存区（Staging Area）：用于存放即将提交的更改  本地仓库（Local Repository）：保存历史版本记录  远程仓库（Remote Repository）：托管在服务器上的代码仓库（如 GitHub）   Git 的基本工作流程如下： 工作区 → 暂存区 → 本地仓库 → 远">
+<meta property="og:description" content="前言一些大的项目，每次重新编译需要等待较长时间。ccache是一个编译缓存工具，它的工作原理是将被编译过的目标文件（例如.o文件）缓存起来。当你再次编译相同代码时，它会直接从缓存中读取已经编译好的文件，而不是让编译器重新执行耗时的编译过程。 安装ccache 安装前，需要先安装编译工具  1sudo apt install build-essential   更新软件包列表  1sudo apt">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-05-04T09:15:46.000Z">
-<meta property="article:modified_time" content="2026-05-12T05:25:07.924Z">
+<meta property="og:image" content="https://www.8822888.xyz/images/2026061101.png">
+<meta property="article:published_time" content="2026-06-11T01:22:06.000Z">
+<meta property="article:modified_time" content="2026-06-11T01:44:21.545Z">
 <meta property="article:author" content="zn">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.8822888.xyz/images/2026061101.png">
   
   
   
-  <title>Git 常用命令使用 - 编译生活</title>
+  <title>使用ccache加速编译 - 编译生活</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -250,7 +252,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Git 常用命令使用"></span>
+            <span id="subtitle" data-typed-text="使用ccache加速编译"></span>
           
         </div>
 
@@ -261,8 +263,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-05-04 17:15" pubdate>
-          2026年5月4日 下午
+        <time datetime="2026-06-11 09:22" pubdate>
+          2026年6月11日 上午
         </time>
       </span>
     
@@ -273,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          979 字
+          551 字
         
       </span>
     
@@ -284,7 +286,7 @@
         
         
         
-          9 分钟
+          5 分钟
         
       </span>
     
@@ -323,88 +325,62 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Git 常用命令使用</h1>
+            <h1 id="seo-header">使用ccache加速编译</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="一、Git-基础概念"><a href="#一、Git-基础概念" class="headerlink" title="一、Git 基础概念"></a>一、Git 基础概念</h1><p>关键概念：</p>
-<ul>
-<li><p>工作区（Working Directory）：你当前编辑代码的目录</p>
-</li>
-<li><p>暂存区（Staging Area）：用于存放即将提交的更改</p>
-</li>
-<li><p>本地仓库（Local Repository）：保存历史版本记录</p>
-</li>
-<li><p>远程仓库（Remote Repository）：托管在服务器上的代码仓库（如 GitHub）</p>
-</li>
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>一些大的项目，每次重新编译需要等待较长时间。<br>ccache是一个编译缓存工具，它的工作原理是将被编译过的目标文件（例如.o文件）缓存起来。当你再次编译相同代码时，它会直接从缓存中读取已经编译好的文件，而不是让编译器重新执行耗时的编译过程。</p>
+<h1 id="安装ccache"><a href="#安装ccache" class="headerlink" title="安装ccache"></a>安装ccache</h1><ul>
+<li>安装前，需要先安装编译工具</li>
 </ul>
-<p>Git 的基本工作流程如下：</p>
-<p>工作区 → 暂存区 → 本地仓库 → 远程仓库</p>
-<h1 id="二、仓库初始化与克隆"><a href="#二、仓库初始化与克隆" class="headerlink" title="二、仓库初始化与克隆"></a>二、仓库初始化与克隆</h1><h2 id="1-初始化仓库"><a href="#1-初始化仓库" class="headerlink" title="1. 初始化仓库"></a>1. 初始化仓库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git init<br></code></pre></td></tr></table></figure>
-
-<p>在当前目录创建一个新的 Git 仓库。</p>
-<h2 id="2-克隆远程仓库"><a href="#2-克隆远程仓库" class="headerlink" title="2. 克隆远程仓库"></a>2. 克隆远程仓库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">clone</span> &lt;仓库地址&gt;<br></code></pre></td></tr></table></figure>
-
-
-<h1 id="三、文件操作与提交"><a href="#三、文件操作与提交" class="headerlink" title="三、文件操作与提交"></a>三、文件操作与提交</h1><h2 id="1-查看状态"><a href="#1-查看状态" class="headerlink" title="1. 查看状态"></a>1. 查看状态</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git status<br></code></pre></td></tr></table></figure>
-
-<p>查看当前工作区和暂存区状态，是最常用的命令之一。</p>
-<h2 id="2-添加文件到暂存区"><a href="#2-添加文件到暂存区" class="headerlink" title="2. 添加文件到暂存区"></a>2. 添加文件到暂存区</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">git add 文件名<br>git add .<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> apt install build-essential<br></code></pre></td></tr></table></figure>
 
 <ul>
-<li>“git add .” 表示添加所有更改</li>
+<li>更新软件包列表</li>
 </ul>
-<h2 id="3-提交更改"><a href="#3-提交更改" class="headerlink" title="3. 提交更改"></a>3. 提交更改</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git commit -m <span class="hljs-string">&quot;提交说明&quot;</span><br></code></pre></td></tr></table></figure>
-<p>建议提交信息简洁明确，例如：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git commit -m <span class="hljs-string">&quot;fix: 修复登录接口异常&quot;</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> apt update<br></code></pre></td></tr></table></figure>
 
+<ul>
+<li>安装ccache</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> apt install ccache<br></code></pre></td></tr></table></figure>
 
-<h1 id="四、分支管理"><a href="#四、分支管理" class="headerlink" title="四、分支管理"></a>四、分支管理</h1><p>分支是 Git 最强大的特性之一。</p>
-<h2 id="1-查看分支"><a href="#1-查看分支" class="headerlink" title="1. 查看分支"></a>1. 查看分支</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git branch<br></code></pre></td></tr></table></figure>
+<ul>
+<li>验证是否安装</li>
+</ul>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ada">ccache <span class="hljs-comment">--version</span><br></code></pre></td></tr></table></figure>
 
-<h2 id="2-创建分支"><a href="#2-创建分支" class="headerlink" title="2. 创建分支"></a>2. 创建分支</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git branch 分支名<br></code></pre></td></tr></table></figure>
+<ul>
+<li>配置环境变量</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;export PATH=&quot;/usr/lib/ccache:$PATH&quot;&#x27;</span> &gt;&gt; ~/.bashrc<br><span class="hljs-built_in">source</span> ~/.bashrc<br></code></pre></td></tr></table></figure>
 
-<h2 id="3-切换分支"><a href="#3-切换分支" class="headerlink" title="3. 切换分支"></a>3. 切换分支</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git checkout 分支名<br></code></pre></td></tr></table></figure>
+<h1 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h1><ul>
+<li>查看调用的gcc、g++是否&#x2F;usr&#x2F;lib&#x2F;ccache&#x2F;目录下的</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">which</span> gcc &amp;&amp; <span class="hljs-built_in">which</span> g++<br></code></pre></td></tr></table></figure>
+<p><img src="/images/2026061101.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><ul>
+<li>查看缓存统计信息（例如缓存命中率、当前使用的空间）</li>
+</ul>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">ccache -s</span><br></code></pre></td></tr></table></figure>
 
-<p>或</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git switch 分支名<br></code></pre></td></tr></table></figure>
+<ul>
+<li>清零当前的统计数据</li>
+</ul>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">ccache -z</span><br></code></pre></td></tr></table></figure>
 
-<h2 id="4-创建并切换分支"><a href="#4-创建并切换分支" class="headerlink" title="4. 创建并切换分支"></a>4. 创建并切换分支</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git checkout -b 分支名<br></code></pre></td></tr></table></figure>
+<ul>
+<li>设置最大缓存大小（默认通常是5GB，你可以根据硬盘空间调整，例如设置为50GB）</li>
+</ul>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">ccache</span> -M <span class="hljs-number">50</span>G<br></code></pre></td></tr></table></figure>
 
-<h2 id="5-合并分支"><a href="#5-合并分支" class="headerlink" title="5. 合并分支"></a>5. 合并分支</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git merge 分支名<br></code></pre></td></tr></table></figure>
-<p>将指定分支合并到当前分支。</p>
-<h1 id="五、远程仓库操作"><a href="#五、远程仓库操作" class="headerlink" title="五、远程仓库操作"></a>五、远程仓库操作</h1><h2 id="1-查看远程仓库"><a href="#1-查看远程仓库" class="headerlink" title="1. 查看远程仓库"></a>1. 查看远程仓库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git remote -v<br></code></pre></td></tr></table></figure>
-<h2 id="2-添加远程仓库"><a href="#2-添加远程仓库" class="headerlink" title="2. 添加远程仓库"></a>2. 添加远程仓库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git remote add origin &lt;仓库地址&gt;<br></code></pre></td></tr></table></figure>
-<h2 id="3-推送代码"><a href="#3-推送代码" class="headerlink" title="3. 推送代码"></a>3. 推送代码</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git push origin 分支名<br></code></pre></td></tr></table></figure>
-<p>首次推送：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git push -u origin main<br></code></pre></td></tr></table></figure>
-<h2 id="4-拉取代码"><a href="#4-拉取代码" class="headerlink" title="4. 拉取代码"></a>4. 拉取代码</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git pull origin 分支名<br></code></pre></td></tr></table></figure>
-<p>等价于：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git fetch + git merge<br></code></pre></td></tr></table></figure>
+<ul>
+<li>清空当前所有缓存</li>
+</ul>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">ccache -C</span><br></code></pre></td></tr></table></figure>
 
-
-<h1 id="六、版本回退与撤销"><a href="#六、版本回退与撤销" class="headerlink" title="六、版本回退与撤销"></a>六、版本回退与撤销</h1><h2 id="1-查看提交历史"><a href="#1-查看提交历史" class="headerlink" title="1. 查看提交历史"></a>1. 查看提交历史</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">log</span><br></code></pre></td></tr></table></figure>
-<p>简洁模式：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">log</span> --oneline<br></code></pre></td></tr></table></figure>
-<h2 id="2-回退版本"><a href="#2-回退版本" class="headerlink" title="2. 回退版本"></a>2. 回退版本</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git reset --hard 提交ID<br></code></pre></td></tr></table></figure>
-<p> 注意：该操作会丢失之后的修改。</p>
-<h2 id="3-撤销工作区修改"><a href="#3-撤销工作区修改" class="headerlink" title="3. 撤销工作区修改"></a>3. 撤销工作区修改</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git checkout -- 文件名<br></code></pre></td></tr></table></figure>
-<h2 id="4-撤销暂存区修改"><a href="#4-撤销暂存区修改" class="headerlink" title="4. 撤销暂存区修改"></a>4. 撤销暂存区修改</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git reset HEAD 文件名<br></code></pre></td></tr></table></figure>
-
-
-<h1 id="七、冲突解决"><a href="#七、冲突解决" class="headerlink" title="七、冲突解决"></a>七、冲突解决</h1><p>当多个分支修改同一文件同一位置时，会产生冲突。</p>
-<p>解决步骤：</p>
-<ol>
-<li><p>打开冲突文件（包含 “&lt;&lt;&lt;&lt;&lt;&lt;” 标记）</p>
-</li>
-<li><p>手动修改代码</p>
-</li>
-<li><p>标记为已解决：<code>git add 文件名</code></p>
-</li>
-<li><p>完成合并：<code>git commit</code></p>
-</li>
-</ol>
 
                 
               </div>
@@ -422,8 +398,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Git 常用命令使用</div>
-      <div>https://www.8822888.xyz/2026/05/04/Git-常用命令使用/</div>
+      <div>使用ccache加速编译</div>
+      <div>https://www.8822888.xyz/2026/06/11/compile-using-ccache/</div>
     </div>
     <div class="license-meta">
       
@@ -435,7 +411,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年5月4日</div>
+          <div>2026年6月11日</div>
         </div>
       
       
@@ -467,18 +443,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/06/11/compile-using-ccache/" title="使用ccache加速编译">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">使用ccache加速编译</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/04/27/%E5%91%A8%E4%B8%80%E7%9A%84%E6%97%A9%E5%85%AB%EF%BC%8C%E4%BB%A5%E5%8F%8A%E7%BB%88%E4%BA%8E%E8%B7%91%E9%80%9A%E7%9A%84-API/" title="周一的早八，以及终于跑通的 API">
-                        <span class="hidden-mobile">周一的早八，以及终于跑通的 API</span>
+                      <a href="/2026/05/04/Git-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/" title="Git 常用命令使用">
+                        <span class="hidden-mobile">Git 常用命令使用</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
