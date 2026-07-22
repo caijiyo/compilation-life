@@ -19,23 +19,21 @@
   <meta name="author" content="zn">
   <meta name="keywords" content="">
   
-    <meta name="description" content="前言一些大的项目，每次重新编译需要等待较长时间。ccache是一个编译缓存工具，它的工作原理是将被编译过的目标文件（例如.o文件）缓存起来。当你再次编译相同代码时，它会直接从缓存中读取已经编译好的文件，而不是让编译器重新执行耗时的编译过程。 安装ccache 安装前，需要先安装编译工具  1sudo apt install build-essential   更新软件包列表  1sudo apt">
+    <meta name="description" content="Docker 的网络一直与 Linux 防火墙体系深度绑定。从最早依赖 iptables，到逐渐适配 nftables，到不同发行版默认采用 ufw、firewalld 等防火墙管理工具，不同发行版和防火墙管理工具对这些规则的处理方式存在差异。本文简单梳理 Docker 各版本与常见防火墙工具的兼容情况。 Docker 与防火墙机制的关系Docker 默认依赖 Linux 内核网络栈，通过 ipt">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用ccache加速编译">
-<meta property="og:url" content="https://www.8822888.xyz/2026/06/11/compile-using-ccache/index.html">
+<meta property="og:title" content="Docker与防火墙管理工具兼容性分析">
+<meta property="og:url" content="https://www.8822888.xyz/2026/07/22/docker-and-firewall-compatibility/index.html">
 <meta property="og:site_name" content="编译生活">
-<meta property="og:description" content="前言一些大的项目，每次重新编译需要等待较长时间。ccache是一个编译缓存工具，它的工作原理是将被编译过的目标文件（例如.o文件）缓存起来。当你再次编译相同代码时，它会直接从缓存中读取已经编译好的文件，而不是让编译器重新执行耗时的编译过程。 安装ccache 安装前，需要先安装编译工具  1sudo apt install build-essential   更新软件包列表  1sudo apt">
+<meta property="og:description" content="Docker 的网络一直与 Linux 防火墙体系深度绑定。从最早依赖 iptables，到逐渐适配 nftables，到不同发行版默认采用 ufw、firewalld 等防火墙管理工具，不同发行版和防火墙管理工具对这些规则的处理方式存在差异。本文简单梳理 Docker 各版本与常见防火墙工具的兼容情况。 Docker 与防火墙机制的关系Docker 默认依赖 Linux 内核网络栈，通过 ipt">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://www.8822888.xyz/images/2026061101.png">
-<meta property="article:published_time" content="2026-06-11T01:22:06.000Z">
-<meta property="article:modified_time" content="2026-06-11T01:44:21.545Z">
+<meta property="article:published_time" content="2026-07-22T07:27:30.000Z">
+<meta property="article:modified_time" content="2026-07-22T07:37:52.131Z">
 <meta property="article:author" content="zn">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://www.8822888.xyz/images/2026061101.png">
   
   
   
-  <title>使用ccache加速编译 - 编译生活</title>
+  <title>Docker与防火墙管理工具兼容性分析 - 编译生活</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -252,7 +250,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="使用ccache加速编译"></span>
+            <span id="subtitle" data-typed-text="Docker与防火墙管理工具兼容性分析"></span>
           
         </div>
 
@@ -263,8 +261,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-06-11 09:22" pubdate>
-          2026年6月11日 上午
+        <time datetime="2026-07-22 15:27" pubdate>
+          2026年7月22日 下午
         </time>
       </span>
     
@@ -275,7 +273,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          551 字
+          1.3k 字
         
       </span>
     
@@ -286,7 +284,7 @@
         
         
         
-          5 分钟
+          11 分钟
         
       </span>
     
@@ -325,62 +323,115 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">使用ccache加速编译</h1>
+            <h1 id="seo-header">Docker与防火墙管理工具兼容性分析</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>一些大的项目，每次重新编译需要等待较长时间。<br>ccache是一个编译缓存工具，它的工作原理是将被编译过的目标文件（例如.o文件）缓存起来。当你再次编译相同代码时，它会直接从缓存中读取已经编译好的文件，而不是让编译器重新执行耗时的编译过程。</p>
-<h1 id="安装ccache"><a href="#安装ccache" class="headerlink" title="安装ccache"></a>安装ccache</h1><ul>
-<li>安装前，需要先安装编译工具</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> apt install build-essential<br></code></pre></td></tr></table></figure>
-
+                <p>Docker 的网络一直与 Linux 防火墙体系深度绑定。从最早依赖 iptables，到逐渐适配 nftables，到不同发行版默认采用 ufw、firewalld 等防火墙管理工具，不同发行版和防火墙管理工具对这些规则的处理方式存在差异。本文简单梳理 Docker 各版本与常见防火墙工具的兼容情况。</p>
+<h1 id="Docker-与防火墙机制的关系"><a href="#Docker-与防火墙机制的关系" class="headerlink" title="Docker 与防火墙机制的关系"></a>Docker 与防火墙机制的关系</h1><p>Docker 默认依赖 Linux 内核网络栈，通过 iptables（或 nftables 后端）管理容器网络，包括：</p>
 <ul>
-<li>更新软件包列表</li>
+<li>NAT 转发</li>
+<li>端口映射</li>
+<li>容器间通信</li>
+<li>网络隔离</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> apt update<br></code></pre></td></tr></table></figure>
-
-<ul>
-<li>安装ccache</li>
+<p>因此，防火墙工具是否会覆盖、修改或阻断 Docker 自动生成的规则，是兼容性的核心问题。</p>
+<h1 id="Docker-版本与防火墙兼容性"><a href="#Docker-版本与防火墙兼容性" class="headerlink" title="Docker 版本与防火墙兼容性"></a>Docker 版本与防火墙兼容性</h1><table>
+<thead>
+<tr>
+<th>Docker 版本</th>
+<th>网络规则机制</th>
+<th>兼容情况</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Docker 19.x 及以前</td>
+<td>主要依赖 iptables</td>
+<td>与传统 iptables 防火墙兼容较好</td>
+</tr>
+<tr>
+<td>Docker 20.x - 23.x</td>
+<td>默认仍使用 iptables，同时逐步支持 nft 后端</td>
+<td>与 ufw、firewalld 存在部分冲突</td>
+</tr>
+<tr>
+<td>Docker 24.x+</td>
+<td>增强 nftables 支持，逐渐适配现代 Linux 防火墙体系</td>
+<td>与 nftables&#x2F;firewalld 兼容性更好</td>
+</tr>
+</tbody></table>
+<p>需要注意的是，Docker 并不是完全由防火墙工具管理，它会直接写入底层规则，因此某些高级防火墙工具无法完全控制 Docker 流量。</p>
+<h1 id="UFW-兼容性分析"><a href="#UFW-兼容性分析" class="headerlink" title="UFW 兼容性分析"></a>UFW 兼容性分析</h1><p>UFW 是 Ubuntu 默认防火墙工具，底层仍然基于 iptables。</p>
+<h2 id="兼容情况："><a href="#兼容情况：" class="headerlink" title="兼容情况："></a>兼容情况：</h2><ul>
+<li>Docker 早期版本与 UFW 存在明显冲突。</li>
+<li>Docker 发布端口后，可能绕过 UFW 的规则。</li>
+<li>UFW 的 allow&#x2F;deny 规则不一定能够限制 Docker 暴露的端口。</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> apt install ccache<br></code></pre></td></tr></table></figure>
-
-<ul>
-<li>验证是否安装</li>
+<h2 id="适用场景："><a href="#适用场景：" class="headerlink" title="适用场景："></a>适用场景：</h2><ul>
+<li>个人服务器</li>
+<li>开发环境</li>
+<li>简单 Ubuntu 主机</li>
 </ul>
-<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ada">ccache <span class="hljs-comment">--version</span><br></code></pre></td></tr></table></figure>
-
-<ul>
-<li>配置环境变量</li>
+<h2 id="生产环境评价："><a href="#生产环境评价：" class="headerlink" title="生产环境评价："></a>生产环境评价：</h2><p>不推荐作为 Docker 主机主要防火墙方案，尤其是需要严格控制容器访问策略时。</p>
+<h1 id="nftables-兼容性分析"><a href="#nftables-兼容性分析" class="headerlink" title="nftables 兼容性分析"></a>nftables 兼容性分析</h1><p>nftables 是 Linux 新一代防火墙框架，也是 iptables 的长期替代方向。</p>
+<h2 id="兼容情况：-1"><a href="#兼容情况：-1" class="headerlink" title="兼容情况："></a>兼容情况：</h2><ul>
+<li>新版本 Linux 发行版默认采用 nftables。</li>
+<li>Docker 新版本逐渐改善 nftables 支持。</li>
+<li>规则结构更清晰，更适合复杂网络环境。</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;export PATH=&quot;/usr/lib/ccache:$PATH&quot;&#x27;</span> &gt;&gt; ~/.bashrc<br><span class="hljs-built_in">source</span> ~/.bashrc<br></code></pre></td></tr></table></figure>
-
-<h1 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h1><ul>
-<li>查看调用的gcc、g++是否&#x2F;usr&#x2F;lib&#x2F;ccache&#x2F;目录下的</li>
+<h2 id="优势："><a href="#优势：" class="headerlink" title="优势："></a>优势：</h2><ul>
+<li>原生内核支持</li>
+<li>性能更好</li>
+<li>规则管理统一</li>
+<li>适合云服务器和生产环境</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">which</span> gcc &amp;&amp; <span class="hljs-built_in">which</span> g++<br></code></pre></td></tr></table></figure>
-<p><img src="/images/2026061101.png" srcset="/img/loading.gif" lazyload></p>
-<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><ul>
-<li>查看缓存统计信息（例如缓存命中率、当前使用的空间）</li>
+<h2 id="不足："><a href="#不足：" class="headerlink" title="不足："></a>不足：</h2><p>配置复杂度高于 ufw。<br>需要一定网络基础。</p>
+<h1 id="firewalld-兼容性分析"><a href="#firewalld-兼容性分析" class="headerlink" title="firewalld 兼容性分析"></a>firewalld 兼容性分析</h1><p>firewalld 常用于 CentOS、RHEL、Rocky Linux、Fedora 等系统。</p>
+<h2 id="兼容情况：-2"><a href="#兼容情况：-2" class="headerlink" title="兼容情况："></a>兼容情况：</h2><ul>
+<li>Docker 与 firewalld 长期存在较好的兼容关系。</li>
+<li>firewalld 可以识别 Docker 创建的网络接口。</li>
+<li>新版本默认使用 nftables 后端。</li>
 </ul>
-<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">ccache -s</span><br></code></pre></td></tr></table></figure>
-
-<ul>
-<li>清零当前的统计数据</li>
+<h2 id="优势：-1"><a href="#优势：-1" class="headerlink" title="优势："></a>优势：</h2><ul>
+<li>动态管理规则</li>
+<li>与企业 Linux 生态结合紧密</li>
+<li>对 Docker、Kubernetes 支持较成熟</li>
 </ul>
-<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">ccache -z</span><br></code></pre></td></tr></table></figure>
-
-<ul>
-<li>设置最大缓存大小（默认通常是5GB，你可以根据硬盘空间调整，例如设置为50GB）</li>
+<h2 id="适用场景：-1"><a href="#适用场景：-1" class="headerlink" title="适用场景："></a>适用场景：</h2><ul>
+<li>企业服务器</li>
+<li>云主机</li>
+<li>容器生产环境</li>
 </ul>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">ccache</span> -M <span class="hljs-number">50</span>G<br></code></pre></td></tr></table></figure>
-
-<ul>
-<li>清空当前所有缓存</li>
-</ul>
-<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">ccache -C</span><br></code></pre></td></tr></table></figure>
-
+<h1 id="推荐选择"><a href="#推荐选择" class="headerlink" title="推荐选择"></a>推荐选择</h1><p>综合 Docker 版本和维护成本：</p>
+<table>
+<thead>
+<tr>
+<th>使用场景</th>
+<th>推荐方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ubuntu 个人服务器</td>
+<td>nftables 或 firewalld</td>
+</tr>
+<tr>
+<td>企业生产环境</td>
+<td>firewalld + nftables 后端</td>
+</tr>
+<tr>
+<td>Kubernetes 节点</td>
+<td>nftables &#x2F; firewalld</td>
+</tr>
+<tr>
+<td>老系统 Docker 环境</td>
+<td>iptables 兼容方案</td>
+</tr>
+<tr>
+<td>简单开发测试</td>
+<td>UFW</td>
+</tr>
+</tbody></table>
 
                 
               </div>
@@ -398,8 +449,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>使用ccache加速编译</div>
-      <div>https://www.8822888.xyz/2026/06/11/compile-using-ccache/</div>
+      <div>Docker与防火墙管理工具兼容性分析</div>
+      <div>https://www.8822888.xyz/2026/07/22/docker-and-firewall-compatibility/</div>
     </div>
     <div class="license-meta">
       
@@ -411,7 +462,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年6月11日</div>
+          <div>2026年7月22日</div>
         </div>
       
       
@@ -443,18 +494,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/07/22/docker-and-firewall-compatibility/" title="Docker与防火墙管理工具兼容性分析">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Docker与防火墙管理工具兼容性分析</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/05/04/Git-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/" title="Git 常用命令使用">
-                        <span class="hidden-mobile">Git 常用命令使用</span>
+                      <a href="/2026/06/11/compile-using-ccache/" title="使用ccache加速编译">
+                        <span class="hidden-mobile">使用ccache加速编译</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

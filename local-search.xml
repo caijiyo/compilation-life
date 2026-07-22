@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>Docker与防火墙管理工具兼容性分析</title>
+    <link href="/2026/07/22/docker-and-firewall-compatibility/"/>
+    <url>/2026/07/22/docker-and-firewall-compatibility/</url>
+    
+    <content type="html"><![CDATA[<p>Docker 的网络一直与 Linux 防火墙体系深度绑定。从最早依赖 iptables，到逐渐适配 nftables，到不同发行版默认采用 ufw、firewalld 等防火墙管理工具，不同发行版和防火墙管理工具对这些规则的处理方式存在差异。本文简单梳理 Docker 各版本与常见防火墙工具的兼容情况。</p><h1 id="Docker-与防火墙机制的关系"><a href="#Docker-与防火墙机制的关系" class="headerlink" title="Docker 与防火墙机制的关系"></a>Docker 与防火墙机制的关系</h1><p>Docker 默认依赖 Linux 内核网络栈，通过 iptables（或 nftables 后端）管理容器网络，包括：</p><ul><li>NAT 转发</li><li>端口映射</li><li>容器间通信</li><li>网络隔离</li></ul><p>因此，防火墙工具是否会覆盖、修改或阻断 Docker 自动生成的规则，是兼容性的核心问题。</p><h1 id="Docker-版本与防火墙兼容性"><a href="#Docker-版本与防火墙兼容性" class="headerlink" title="Docker 版本与防火墙兼容性"></a>Docker 版本与防火墙兼容性</h1><table><thead><tr><th>Docker 版本</th><th>网络规则机制</th><th>兼容情况</th></tr></thead><tbody><tr><td>Docker 19.x 及以前</td><td>主要依赖 iptables</td><td>与传统 iptables 防火墙兼容较好</td></tr><tr><td>Docker 20.x - 23.x</td><td>默认仍使用 iptables，同时逐步支持 nft 后端</td><td>与 ufw、firewalld 存在部分冲突</td></tr><tr><td>Docker 24.x+</td><td>增强 nftables 支持，逐渐适配现代 Linux 防火墙体系</td><td>与 nftables&#x2F;firewalld 兼容性更好</td></tr></tbody></table><p>需要注意的是，Docker 并不是完全由防火墙工具管理，它会直接写入底层规则，因此某些高级防火墙工具无法完全控制 Docker 流量。</p><h1 id="UFW-兼容性分析"><a href="#UFW-兼容性分析" class="headerlink" title="UFW 兼容性分析"></a>UFW 兼容性分析</h1><p>UFW 是 Ubuntu 默认防火墙工具，底层仍然基于 iptables。</p><h2 id="兼容情况："><a href="#兼容情况：" class="headerlink" title="兼容情况："></a>兼容情况：</h2><ul><li>Docker 早期版本与 UFW 存在明显冲突。</li><li>Docker 发布端口后，可能绕过 UFW 的规则。</li><li>UFW 的 allow&#x2F;deny 规则不一定能够限制 Docker 暴露的端口。</li></ul><h2 id="适用场景："><a href="#适用场景：" class="headerlink" title="适用场景："></a>适用场景：</h2><ul><li>个人服务器</li><li>开发环境</li><li>简单 Ubuntu 主机</li></ul><h2 id="生产环境评价："><a href="#生产环境评价：" class="headerlink" title="生产环境评价："></a>生产环境评价：</h2><p>不推荐作为 Docker 主机主要防火墙方案，尤其是需要严格控制容器访问策略时。</p><h1 id="nftables-兼容性分析"><a href="#nftables-兼容性分析" class="headerlink" title="nftables 兼容性分析"></a>nftables 兼容性分析</h1><p>nftables 是 Linux 新一代防火墙框架，也是 iptables 的长期替代方向。</p><h2 id="兼容情况：-1"><a href="#兼容情况：-1" class="headerlink" title="兼容情况："></a>兼容情况：</h2><ul><li>新版本 Linux 发行版默认采用 nftables。</li><li>Docker 新版本逐渐改善 nftables 支持。</li><li>规则结构更清晰，更适合复杂网络环境。</li></ul><h2 id="优势："><a href="#优势：" class="headerlink" title="优势："></a>优势：</h2><ul><li>原生内核支持</li><li>性能更好</li><li>规则管理统一</li><li>适合云服务器和生产环境</li></ul><h2 id="不足："><a href="#不足：" class="headerlink" title="不足："></a>不足：</h2><p>配置复杂度高于 ufw。<br>需要一定网络基础。</p><h1 id="firewalld-兼容性分析"><a href="#firewalld-兼容性分析" class="headerlink" title="firewalld 兼容性分析"></a>firewalld 兼容性分析</h1><p>firewalld 常用于 CentOS、RHEL、Rocky Linux、Fedora 等系统。</p><h2 id="兼容情况：-2"><a href="#兼容情况：-2" class="headerlink" title="兼容情况："></a>兼容情况：</h2><ul><li>Docker 与 firewalld 长期存在较好的兼容关系。</li><li>firewalld 可以识别 Docker 创建的网络接口。</li><li>新版本默认使用 nftables 后端。</li></ul><h2 id="优势：-1"><a href="#优势：-1" class="headerlink" title="优势："></a>优势：</h2><ul><li>动态管理规则</li><li>与企业 Linux 生态结合紧密</li><li>对 Docker、Kubernetes 支持较成熟</li></ul><h2 id="适用场景：-1"><a href="#适用场景：-1" class="headerlink" title="适用场景："></a>适用场景：</h2><ul><li>企业服务器</li><li>云主机</li><li>容器生产环境</li></ul><h1 id="推荐选择"><a href="#推荐选择" class="headerlink" title="推荐选择"></a>推荐选择</h1><p>综合 Docker 版本和维护成本：</p><table><thead><tr><th>使用场景</th><th>推荐方案</th></tr></thead><tbody><tr><td>Ubuntu 个人服务器</td><td>nftables 或 firewalld</td></tr><tr><td>企业生产环境</td><td>firewalld + nftables 后端</td></tr><tr><td>Kubernetes 节点</td><td>nftables &#x2F; firewalld</td></tr><tr><td>老系统 Docker 环境</td><td>iptables 兼容方案</td></tr><tr><td>简单开发测试</td><td>UFW</td></tr></tbody></table>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>使用ccache加速编译</title>
     <link href="/2026/06/11/compile-using-ccache/"/>
     <url>/2026/06/11/compile-using-ccache/</url>
