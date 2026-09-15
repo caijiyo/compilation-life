@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>为什么你需要一个哈希表</title>
+    <link href="/2026/09/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%A0%E9%9C%80%E8%A6%81%E4%B8%80%E4%B8%AA%E5%93%88%E5%B8%8C%E8%A1%A8/"/>
+    <url>/2026/09/15/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%A0%E9%9C%80%E8%A6%81%E4%B8%80%E4%B8%AA%E5%93%88%E5%B8%8C%E8%A1%A8/</url>
+    
+    <content type="html"><![CDATA[<h1 id="从一个问题说起"><a href="#从一个问题说起" class="headerlink" title="从一个问题说起"></a>从一个问题说起</h1><p>假设你有一个存了 100 万个用户的数组，现在要查找用户「张三」。<br>用数组挨个遍历，最坏要比较 100 万次。这效率，甲方看了都要沉默。<br>哈希表说：给我一次，就一次。</p><h1 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h1><p>哈希表 &#x3D; 数组 + 哈希函数</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plain">&quot;张三&quot; ──哈希函数──→  index = 42 ──→ users[42]<br></code></pre></td></tr></table></figure><ol><li>把 key 扔进哈希函数，算出一个下标</li><li>直接跳到数组对应位置取值</li><li>不比较、不遍历，一步到位</li></ol><h1 id="理想-vs-现实"><a href="#理想-vs-现实" class="headerlink" title="理想 vs 现实"></a>理想 vs 现实</h1><h3 id="理想情况：查找-O-1"><a href="#理想情况：查找-O-1" class="headerlink" title="理想情况：查找 O(1)"></a>理想情况：查找 O(1)</h3><h3 id="现实：哈希冲突-——-两个-key-算出同一个下标。"><a href="#现实：哈希冲突-——-两个-key-算出同一个下标。" class="headerlink" title="现实：哈希冲突 —— 两个 key 算出同一个下标。"></a>现实：哈希冲突 —— 两个 key 算出同一个下标。</h3><ul><li>解决办法（知道名字就行）：</li><li>链地址法：冲突的位置挂一条链表</li><li>开放寻址法：换个空位继续放</li></ul><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs Python"><span class="hljs-comment"># Python 中的哈希表（字典）</span><br>scores = &#123;<span class="hljs-string">&quot;张三&quot;</span>: <span class="hljs-number">90</span>, <span class="hljs-string">&quot;李四&quot;</span>: <span class="hljs-number">85</span>&#125;<br><span class="hljs-built_in">print</span>(scores[<span class="hljs-string">&quot;张三&quot;</span>])  <span class="hljs-comment"># O(1)，一步到位</span><br></code></pre></td></tr></table></figure><h1 id="常见场景"><a href="#常见场景" class="headerlink" title="常见场景"></a>常见场景</h1><table><thead><tr><th>场景</th><th>为什么用哈希表</th></tr></thead><tbody><tr><td>统计词频</td><td>key 是单词，value 是次数</td></tr><tr><td>缓存（Cache）</td><td>快速判断数据是否存在</td></tr><tr><td>两数之和（LeetCode 1）</td><td>边遍历边查”另一半”</td></tr></tbody></table><h1 id="一句话总结"><a href="#一句话总结" class="headerlink" title="一句话总结"></a>一句话总结</h1><p>用空间换时间：数组管”存得下”，哈希函数管”找得快”。</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Docker与防火墙管理工具兼容性分析</title>
     <link href="/2026/07/22/docker-and-firewall-compatibility/"/>
     <url>/2026/07/22/docker-and-firewall-compatibility/</url>
